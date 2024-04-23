@@ -61,22 +61,27 @@ class _SocialPageState extends State<SocialPage> {
 
   //Si selecciona cambiar imagen por galeria, llamar a la eit_profile
   void selectImage() async{
-    Uint8List image = await pickImage(ImageSource.gallery);
-    setState(() {
+    Uint8List? image = await pickImage(ImageSource.gallery);
+    if ( image != null) {
+      setState(() {
       _img = image;
     });
     //Guardar los datos
     StoreData().saveData(file: _img!, userId: id);
+    }else{}
+    
   }
 
   //Si selecciona la camara obtener la imagen
   void cameraImage() async{
-    Uint8List image = await pickImage(ImageSource.camera);
-    setState(() {
+    Uint8List? image = await pickImage(ImageSource.camera);
+    if (image != null) {
+      setState(() {
       _img = image;
     });
     //Guardar los datos
     StoreData().saveData(file: _img!, userId: id);
+    }else{}
   }
 
   //Construir la vista
@@ -121,96 +126,96 @@ class _SocialPageState extends State<SocialPage> {
             //Espacio entre campos
             const SizedBox(height: 25),
             //Centrar imagen
-             Center(
-                child: Stack(
-                  children: [
-                    //Si existe, mostrar imagen del usuario
-                    _img != null
-                        ? CircleAvatar(
-                      //Estilo de la imagen del usuario
+            Center(
+              child: Stack(
+                children: [
+                  //Si existe, mostrar imagen del usuario
+                  _img != null ? CircleAvatar(
+                    //Estilo de la imagen del usuario
                     radius: 60,
+                    child: Container(
+                      //tamaño de la imagen
+                      width: 130,
+                      height: 130,
+                      decoration: BoxDecoration(
+                        //Decoración de la imagen
+                        border: Border.all(width: 4, color: Colors.white),
+                        boxShadow: [
+                          BoxShadow(
+                            //Sombreado
+                            spreadRadius: 2,
+                            blurRadius: 10,
+                            color: Colors.black.withOpacity(0.1),
+                          )
+                        ],
+                        //Imprimir la imagen por defecto
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: MemoryImage(_img!),
+                        ),
+                      ),
+                    ),
+                  ) : GestureDetector(
+                    //Mostrar opciones al oprimir
+                    onTap: () {
+                      //Si selecciona galeria, obtener la imagen seleccionada
+                      DialogHelper.showOptions(context, (ImageSource? source) async {
+                        if (source == ImageSource.gallery) {
+                          selectImage();
+                          //Si se selecciona la camara, abrir la camara
+                        } else if (source == ImageSource.camera) {
+                          cameraImage();
+                        } else{
+
+                        }
+                      });
+                    },
+                    //Decoración circulo de imagen
+                    child: CircleAvatar(
+                      radius: 60,
                       child: Container(
-                        //tamaño de la imagen
                         width: 130,
                         height: 130,
                         decoration: BoxDecoration(
-                          //Decoración de la imagen
                           border: Border.all(width: 4, color: Colors.white),
                           boxShadow: [
                             BoxShadow(
-                              //Sombreado
                               spreadRadius: 2,
                               blurRadius: 10,
                               color: Colors.black.withOpacity(0.1),
                             )
                           ],
-                          //Imprimir la imagen por defecto
                           shape: BoxShape.circle,
                           image: DecorationImage(
                             fit: BoxFit.cover,
-                            image: MemoryImage(_img!),
-                          ),
-                        ),
-                      ),
-                    )
-                        : GestureDetector(
-                      //Mostrar opciones al oprimir
-                      onTap: () {
-                        //Si selecciona galeria, obtener la imagen seleccionada
-                        DialogHelper.showOptions(context, (ImageSource? source) async {
-                          if (source == ImageSource.gallery) {
-                            selectImage();
-                            //Si se selecciona la camara, abrir la camara
-                          } else if (source == ImageSource.camera) {
-                            cameraImage();
-                          }
-                        });
-                      },
-                      //Decoración circulo de imagen
-                      child: CircleAvatar(
-                        radius: 60,
-                        child: Container(
-                          width: 130,
-                          height: 130,
-                          decoration: BoxDecoration(
-                            border: Border.all(width: 4, color: Colors.white),
-                            boxShadow: [
-                              BoxShadow(
-                                spreadRadius: 2,
-                                blurRadius: 10,
-                                color: Colors.black.withOpacity(0.1),
-                              )
-                            ],
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: NetworkImage(userImage),
-                            ),
+                            image: NetworkImage(userImage),
                           ),
                         ),
                       ),
                     ),
-                    //Lapiz que acompaña el circulo de la imagen
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: Container(
-                        height: 40,
-                        width: 40,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(width: 4, color: Colors.white),
-                          color: Colors.red,
-                        ),
-                        child: const Icon(
-                          Icons.edit,
-                          color: Colors.white,
-                        ),
+                  ),
+                  //Lapiz que acompaña el circulo de la imagen
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: Container(
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(width: 4, color: Colors.white),
+                        color: Colors.red,
+                      ),
+                      child: const Icon(
+                        Icons.edit,
+                        color: Colors.white,
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
+            ),
             //Espaciado entre campos
             const SizedBox(height: 35),
             Container(
@@ -257,7 +262,7 @@ class _SocialPageState extends State<SocialPage> {
                   trailing: IconButton(
                     icon: const Icon(Icons.edit),
                     onPressed: () {
-                      
+                      DialogHelper.editPassword(context);
                     },
                   ),
                 ),

@@ -2,8 +2,10 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecocleanproyect/components/responsive.dart';
+import 'package:ecocleanproyect/components/text_field.dart';
 import 'package:ecocleanproyect/views/forgot_password_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -108,6 +110,7 @@ class DialogHelper {
     TextEditingController currentPasswordController = TextEditingController();
     TextEditingController newPasswordController = TextEditingController();
     TextEditingController confirmPasswordController = TextEditingController();
+    bool obscureText = true;
 
     showDialog(
       context: context,
@@ -118,6 +121,38 @@ class DialogHelper {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                TextFieldContainer(
+                  child: TextField(
+                  obscureText: obscureText,
+                  controller: currentPasswordController,
+                  decoration: InputDecoration(
+                    hintText: 'Contraseña antigua',
+                    icon: Icon(Icons.lock, color:Colors.green[100]),
+                    border: InputBorder.none
+                  ),
+                )),
+                const SizedBox(height: 3,),
+                TextFieldContainer(
+                  child: TextField(
+                  obscureText: obscureText,
+                  controller: newPasswordController,
+                  decoration: InputDecoration(
+                    hintText: 'Contraseña nueva',
+                    icon: Icon(Icons.lock, color:Colors.green[100]),
+                    border: InputBorder.none
+                  ),
+                )),
+                const SizedBox(height: 3,),
+                TextFieldContainer(
+                  child: TextField(
+                  obscureText: obscureText,
+                  controller: confirmPasswordController,
+                  decoration: InputDecoration(
+                    hintText: 'Confirmar contraseña',
+                    icon: Icon(Icons.lock, color:Colors.green[100]),
+                    border: InputBorder.none
+                  ),
+                )),
                 TextButton(
                   onPressed: () {
                     Navigator.push(
@@ -127,7 +162,7 @@ class DialogHelper {
                       )
                     );
                   },
-                  child: Text('Olvidé mi contraseña', style: TextStyle(fontSize: responsive.inch * 0.015, color: Colors.grey.shade200)),
+                  child: Text('Olvidé mi contraseña', style: TextStyle(fontSize: responsive.inch * 0.015, color: Colors.grey)),
                 ),
               ],
             ),
@@ -239,6 +274,44 @@ class DialogHelper {
               leading: const Icon(Icons.camera_alt),
               title: const Text('Cámara'),
             ),
+            
+            ListTile(
+              onTap: (){
+                showDialog(context: context, builder: (context){
+                  return AlertDialog(
+                    title: const Text('¿Está seguro que desea eliminar la imagen?'),
+                    actions: [
+                      TextButton(
+                        onPressed: (){
+                          Navigator.pop(context);
+                        }, 
+                        child: const Text('Cancelar', style: TextStyle(color: Colors.green),)
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          User? user = FirebaseAuth.instance.currentUser;
+                          if (user != null) {
+                            //Conexión con el almacenamiento de firebase
+                            final FirebaseStorage _storage = FirebaseStorage.instance;
+                            // Eliminar datos de FirebaseStorage
+                            await _storage.ref().child('profileImages').child(user.uid).delete();
+
+                            final CollectionReference pruebaCollection = FirebaseFirestore.instance.collection('users');
+                            await pruebaCollection.doc(user.uid).update({
+                              'imagenURL': 'https://static.vecteezy.com/system/resources/previews/008/442/086/non_2x/illustration-of-human-icon-user-symbol-icon-modern-design-on-blank-background-free-vector.jpg',
+                            });
+                            Navigator.pop(context);
+                          }
+                        }, 
+                        child: const Text('Aceptar', style: TextStyle(color: Colors.red),)
+                      ),
+                    ],
+                  );
+                });
+              },
+              leading: const Icon(Icons.delete, color: Colors.red,),
+              title: const Text('Eliminar imagen', style: TextStyle(color: Colors.red),),
+            ),
 
             ListTile(
               onTap: () {
@@ -290,6 +363,7 @@ class DialogHelper {
       },
     );
   }
+  
 }
 
 

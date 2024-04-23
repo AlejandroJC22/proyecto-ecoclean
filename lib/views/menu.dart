@@ -100,27 +100,7 @@ class _MenuState extends State<Menu> {
                       },
                     );
                   },
-                  child: CircleAvatar(
-                    radius: 60,
-                    child: Container(
-                      width: 130,
-                      height: 130,
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            spreadRadius: 2,
-                            blurRadius: 10,
-                            color: Colors.black.withOpacity(0.1),
-                          )
-                        ],
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: NetworkImage(userImage),
-                        ),
-                      ),
-                    ),
-                  ),
+                  child: CircleAvatar(backgroundImage: NetworkImage(userImage),),
                 ),
                 const SizedBox(height: 10,),
                 Text(username, style: TextStyle(fontSize: responsive.inch * 0.025),),
