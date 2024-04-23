@@ -89,212 +89,218 @@ class _SocialPageState extends State<SocialPage> {
   Widget build(BuildContext context) {
     //Obtener la diagonal del dispositivo
     final Responsive responsive = Responsive.of(context);
-    return Scaffold(
-      appBar: AppBar(
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 10,),
-          child: GestureDetector(
-          onTap: (){
-            Navigator.of(context).pushNamed('/menu');
-          },
-          child: const Icon(Icons.arrow_back_ios, color: Colors.green),
-          ),
-        ),
-        centerTitle: true,
-        title: Text('Editar Cuenta', style: TextStyle(fontSize: responsive.inch * 0.028, color: Colors.green),),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 15), 
+    return WillPopScope(
+      onWillPop: () async {
+        // Navegar a la página principal
+        Navigator.of(context).pushReplacementNamed('/menu');
+        // Indicar que no se debe permitir que la aplicación se cierre
+        return false;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: Padding(
+            padding: const EdgeInsets.only(left: 10,),
             child: GestureDetector(
-              onTap: () {
-              Navigator.of(context).pushNamed('/home');
+            onTap: (){
+              Navigator.of(context).pushNamed('/menu');
             },
-            child: Icon(Icons.home, size: responsive.inch * 0.035, color: Colors.green),
+            child: const Icon(Icons.arrow_back_ios, color: Colors.green),
             ),
-          )
-        ],
-      ),
-
-      //Construcción de la ventana editar
-      body: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus();
-        },
-        //Construimos todos los apartados en una lista unica
-        child: ListView(
-          children: [
-            //Espacio entre campos
-            const SizedBox(height: 25),
-            //Centrar imagen
-            Center(
-              child: Stack(
-                children: [
-                  //Si existe, mostrar imagen del usuario
-                  _img != null ? CircleAvatar(
-                    //Estilo de la imagen del usuario
-                    radius: 60,
-                    child: Container(
-                      //tamaño de la imagen
-                      width: 130,
-                      height: 130,
-                      decoration: BoxDecoration(
-                        //Decoración de la imagen
-                        border: Border.all(width: 4, color: Colors.white),
-                        boxShadow: [
-                          BoxShadow(
-                            //Sombreado
-                            spreadRadius: 2,
-                            blurRadius: 10,
-                            color: Colors.black.withOpacity(0.1),
-                          )
-                        ],
-                        //Imprimir la imagen por defecto
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: MemoryImage(_img!),
-                        ),
-                      ),
-                    ),
-                  ) : GestureDetector(
-                    //Mostrar opciones al oprimir
-                    onTap: () {
-                      //Si selecciona galeria, obtener la imagen seleccionada
-                      DialogHelper.showOptions(context, (ImageSource? source) async {
-                        if (source == ImageSource.gallery) {
-                          selectImage();
-                          //Si se selecciona la camara, abrir la camara
-                        } else if (source == ImageSource.camera) {
-                          cameraImage();
-                        } else{
-
-                        }
-                      });
-                    },
-                    //Decoración circulo de imagen
-                    child: CircleAvatar(
+          ),
+          centerTitle: true,
+          title: Text('Editar Cuenta', style: TextStyle(fontSize: responsive.inch * 0.028, color: Colors.green),),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 15), 
+              child: GestureDetector(
+                onTap: () {
+                Navigator.of(context).pushNamed('/home');
+              },
+              child: Icon(Icons.home, size: responsive.inch * 0.035, color: Colors.green),
+              ),
+            )
+          ],
+        ),
+      
+        //Construcción de la ventana editar
+        body: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).unfocus();
+          },
+          //Construimos todos los apartados en una lista unica
+          child: ListView(
+            children: [
+              //Espacio entre campos
+              const SizedBox(height: 25),
+              //Centrar imagen
+              Center(
+                child: Stack(
+                  children: [
+                    //Si existe, mostrar imagen del usuario
+                    _img != null ? CircleAvatar(
+                      //Estilo de la imagen del usuario
                       radius: 60,
                       child: Container(
+                        //tamaño de la imagen
                         width: 130,
                         height: 130,
                         decoration: BoxDecoration(
+                          //Decoración de la imagen
                           border: Border.all(width: 4, color: Colors.white),
                           boxShadow: [
                             BoxShadow(
+                              //Sombreado
                               spreadRadius: 2,
                               blurRadius: 10,
                               color: Colors.black.withOpacity(0.1),
                             )
                           ],
+                          //Imprimir la imagen por defecto
                           shape: BoxShape.circle,
                           image: DecorationImage(
                             fit: BoxFit.cover,
-                            image: NetworkImage(userImage),
+                            image: MemoryImage(_img!),
+                          ),
+                        ),
+                      ),
+                    ) : GestureDetector(
+                      //Mostrar opciones al oprimir
+                      onTap: () {
+                        //Si selecciona galeria, obtener la imagen seleccionada
+                        DialogHelper.showOptions(context, (ImageSource? source) async {
+                          if (source == ImageSource.gallery) {
+                            selectImage();
+                            //Si se selecciona la camara, abrir la camara
+                          } else if (source == ImageSource.camera) {
+                            cameraImage();
+                          } 
+                        });
+                      },
+                      //Decoración circulo de imagen
+                      child: CircleAvatar(
+                        radius: 60,
+                        child: Container(
+                          width: 130,
+                          height: 130,
+                          decoration: BoxDecoration(
+                            border: Border.all(width: 4, color: Colors.white),
+                            boxShadow: [
+                              BoxShadow(
+                                spreadRadius: 2,
+                                blurRadius: 10,
+                                color: Colors.black.withOpacity(0.1),
+                              )
+                            ],
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: NetworkImage(userImage),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  //Lapiz que acompaña el circulo de la imagen
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Container(
-                      height: 40,
-                      width: 40,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(width: 4, color: Colors.white),
-                        color: Colors.red,
+                    //Lapiz que acompaña el circulo de la imagen
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Container(
+                        height: 40,
+                        width: 40,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(width: 4, color: Colors.white),
+                          color: Colors.red,
+                        ),
+                        child: const Icon(
+                          Icons.edit,
+                          color: Colors.white,
+                        ),
                       ),
-                      child: const Icon(
-                        Icons.edit,
-                        color: Colors.white,
+                    ),
+                  ],
+                ),
+              ),
+              //Espaciado entre campos
+              const SizedBox(height: 35),
+              Container(
+                //Acciones adicionales de la cuenta
+                color: Colors.green[400],
+                width: double.infinity,
+                height: 25,
+                padding: const EdgeInsets.only(left: 15),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Datos personales',
+                    style: TextStyle(fontSize: responsive.inch * 0.015)
+                  ),
+                ),
+              ),
+              //Parametros para edición
+              Column(
+                children: [
+                  ListTile(
+                  //Primer apartado, edicion de perfil
+                    title: const Text('Nombre de usuario'),
+                    //Mostrar nombre actual
+                    subtitle: Text(username),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.edit),
+                      //Si oprime el campo mostrar la edición del nombre
+                      onPressed: () {
+                        DialogHelper.editProfile(context, 'nombre', username, (newName) {setState(() {
+                          username = newName;
+                        });});
+                      },
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 15),
+                    child: Divider(),
+                  ),
+                  ListTile(
+                    //Tercer apartado, edición de contraseña
+                    title: const Text('Contraseña'),
+                    //Mostrar caracteres de contraseña
+                    subtitle: const Text('********'),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.edit),
+                      onPressed: () {
+                        DialogHelper.editPassword(context);
+                      },
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 15),
+                    child: Divider(),
+                  ),
+                  SizedBox(height: responsive.height * 0.25,),
+                  Container(
+                    //Acciones adicionales de la cuenta
+                    color: Colors.green[400],
+                    width: double.infinity,
+                    height: 25,
+                    padding: const EdgeInsets.only(left: 15),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Control de la cuenta',
+                        style: TextStyle(fontSize: responsive.inch * 0.015)
                       ),
                     ),
                   ),
+                  ListTile(
+                    title: Text('Eliminar Cuenta', style: TextStyle(fontSize: responsive.inch * 0.02, color: Colors.red),),
+                    leading: const Icon(Icons.delete, color: Colors.red,),
+                    onTap: (){
+      
+                    },
+                  )
                 ],
               ),
-            ),
-            //Espaciado entre campos
-            const SizedBox(height: 35),
-            Container(
-              //Acciones adicionales de la cuenta
-              color: Colors.green[400],
-              width: double.infinity,
-              height: 25,
-              padding: const EdgeInsets.only(left: 15),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Datos personales',
-                  style: TextStyle(fontSize: responsive.inch * 0.015)
-                ),
-              ),
-            ),
-            //Parametros para edición
-            Column(
-              children: [
-                ListTile(
-                //Primer apartado, edicion de perfil
-                  title: const Text('Nombre de usuario'),
-                  //Mostrar nombre actual
-                  subtitle: Text(username),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.edit),
-                    //Si oprime el campo mostrar la edición del nombre
-                    onPressed: () {
-                      DialogHelper.editProfile(context, 'nombre', username, (newName) {setState(() {
-                        username = newName;
-                      });});
-                    },
-                  ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 15),
-                  child: Divider(),
-                ),
-                ListTile(
-                  //Tercer apartado, edición de contraseña
-                  title: const Text('Contraseña'),
-                  //Mostrar caracteres de contraseña
-                  subtitle: const Text('********'),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.edit),
-                    onPressed: () {
-                      DialogHelper.editPassword(context);
-                    },
-                  ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 15),
-                  child: Divider(),
-                ),
-                SizedBox(height: responsive.height * 0.25,),
-                Container(
-                  //Acciones adicionales de la cuenta
-                  color: Colors.green[400],
-                  width: double.infinity,
-                  height: 25,
-                  padding: const EdgeInsets.only(left: 15),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Control de la cuenta',
-                      style: TextStyle(fontSize: responsive.inch * 0.015)
-                    ),
-                  ),
-                ),
-                ListTile(
-                  title: Text('Eliminar Cuenta', style: TextStyle(fontSize: responsive.inch * 0.02, color: Colors.red),),
-                  leading: const Icon(Icons.delete, color: Colors.red,),
-                  onTap: (){
-
-                  },
-                )
-              ],
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -300,7 +300,7 @@ class DialogHelper {
                             await pruebaCollection.doc(user.uid).update({
                               'imagenURL': 'https://static.vecteezy.com/system/resources/previews/008/442/086/non_2x/illustration-of-human-icon-user-symbol-icon-modern-design-on-blank-background-free-vector.jpg',
                             });
-                            Navigator.pop(context);
+                            Navigator.of(context).pushNamed('/account');
                           }
                         }, 
                         child: const Text('Aceptar', style: TextStyle(color: Colors.red),)
