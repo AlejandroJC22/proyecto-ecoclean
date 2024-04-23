@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "905887526510",
+    "project_id": "ecocleanproyect",
+    "storage_bucket": "ecocleanproyect.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:905887526510:android:3ae5e63b1c7c1e80c5807f",
+        "android_client_info": {
+          "package_name": "com.example.ecocleanproyect"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCP7G69LSsjKRmUhaId6lb04aTrSAh-yBw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
