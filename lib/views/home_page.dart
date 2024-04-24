@@ -67,10 +67,9 @@ class _PrincipalPageState extends State<PrincipalPage> {
     // Instancia de la clase Responsive para gestionar la responsividad del diseño.
     final Responsive responsive = Responsive.of(context);
 
-    
-    // ignore: deprecated_member_use
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (bool didPop) async {
         // Maneja el evento de presionar el botón de retroceso del teléfono
         // Si el usuario está en la página de inicio, cierra la aplicación
         return await showDialog(
@@ -89,7 +88,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
               ),
             ],
           ),
-        ) ?? false; // Por defecto, devuelve false para evitar que se cierre la aplicación
+        );
       },
       // Estructura principal del widget.
       child: Scaffold(

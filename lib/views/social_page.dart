@@ -1,15 +1,16 @@
-import 'dart:typed_data';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecocleanproyect/components/dialog_helper.dart';
 import 'package:ecocleanproyect/components/responsive.dart';
 import 'package:ecocleanproyect/controller/add_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 
 //Clase editar que permite mostrar la ventana
-class SocialPage extends StatefulWidget{
+class SocialPage extends StatefulWidget {
   const SocialPage({super.key});
 
   @override
@@ -19,7 +20,7 @@ class SocialPage extends StatefulWidget{
 
 class _SocialPageState extends State<SocialPage> {
   //Obtenemos la imagen del controlador
-  Uint8List? _img;
+  File? _img;
   //Creamos las variables para almacenar los datos de la base de datos
   String username = "";
   String userImage = "";
@@ -52,36 +53,38 @@ class _SocialPageState extends State<SocialPage> {
       }
     }
   }
+
   //inicializador de procesos
   @override
-  void initState(){
+  void initState() {
     super.initState();
     _loadUserInfo();
   }
 
   //Si selecciona cambiar imagen por galeria, llamar a la eit_profile
-  void selectImage() async{
-    Uint8List? image = await pickImage(ImageSource.gallery);
-    if ( image != null) {
-      setState(() {
-      _img = image;
+  void selectImage() async {
+    final image = await pickImage(ImageSource.gallery);
+    if (image == null){
+      return;
+    }
+    setState(() {
+      _img = File(image.path);
     });
     //Guardar los datos
-    StoreData().saveData(file: _img!, userId: id);
-    }else{}
-    
+    StoreData().saveData(_img!, id);
   }
 
   //Si selecciona la camara obtener la imagen
-  void cameraImage() async{
-    Uint8List? image = await pickImage(ImageSource.camera);
-    if (image != null) {
-      setState(() {
-      _img = image;
+  void cameraImage() async {
+    final image = await pickImage(ImageSource.camera);
+    if (image == null){
+      return;
+    }
+    setState(() {
+      _img = File(image.path);
     });
-    //Guardar los datos
-    StoreData().saveData(file: _img!, userId: id);
-    }else{}
+    //Guardar datos
+    StoreData().saveData(_img!, id);
   }
 
   //Construir la vista
@@ -89,39 +92,45 @@ class _SocialPageState extends State<SocialPage> {
   Widget build(BuildContext context) {
     //Obtener la diagonal del dispositivo
     final Responsive responsive = Responsive.of(context);
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (bool didPop) async {
         // Navegar a la página principal
         Navigator.of(context).pushReplacementNamed('/menu');
-        // Indicar que no se debe permitir que la aplicación se cierre
-        return false;
       },
       child: Scaffold(
         appBar: AppBar(
           leading: Padding(
-            padding: const EdgeInsets.only(left: 10,),
+            padding: const EdgeInsets.only(
+              left: 10,
+            ),
             child: GestureDetector(
-            onTap: (){
-              Navigator.of(context).pushNamed('/menu');
-            },
-            child: const Icon(Icons.arrow_back_ios, color: Colors.green),
+              onTap: () {
+                Navigator.of(context).pushNamed('/menu');
+              },
+              child: const Icon(Icons.arrow_back_ios, color: Colors.green),
             ),
           ),
           centerTitle: true,
-          title: Text('Editar Cuenta', style: TextStyle(fontSize: responsive.inch * 0.028, color: Colors.green),),
+          title: Text(
+            'Editar Cuenta',
+            style: TextStyle(
+                fontSize: responsive.inch * 0.028, color: Colors.green),
+          ),
           actions: [
             Padding(
-              padding: const EdgeInsets.only(right: 15), 
+              padding: const EdgeInsets.only(right: 15),
               child: GestureDetector(
                 onTap: () {
-                Navigator.of(context).pushNamed('/home');
-              },
-              child: Icon(Icons.home, size: responsive.inch * 0.035, color: Colors.green),
+                  Navigator.of(context).pushNamed('/home');
+                },
+                child: Icon(Icons.home,
+                    size: responsive.inch * 0.035, color: Colors.green),
               ),
             )
           ],
         ),
-      
+
         //Construcción de la ventana editar
         body: GestureDetector(
           onTap: () {
@@ -137,69 +146,73 @@ class _SocialPageState extends State<SocialPage> {
                 child: Stack(
                   children: [
                     //Si existe, mostrar imagen del usuario
-                    _img != null ? CircleAvatar(
-                      //Estilo de la imagen del usuario
-                      radius: 60,
-                      child: Container(
-                        //tamaño de la imagen
-                        width: 130,
-                        height: 130,
-                        decoration: BoxDecoration(
-                          //Decoración de la imagen
-                          border: Border.all(width: 4, color: Colors.white),
-                          boxShadow: [
-                            BoxShadow(
-                              //Sombreado
-                              spreadRadius: 2,
-                              blurRadius: 10,
-                              color: Colors.black.withOpacity(0.1),
-                            )
-                          ],
-                          //Imprimir la imagen por defecto
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: MemoryImage(_img!),
-                          ),
-                        ),
-                      ),
-                    ) : GestureDetector(
-                      //Mostrar opciones al oprimir
-                      onTap: () {
-                        //Si selecciona galeria, obtener la imagen seleccionada
-                        DialogHelper.showOptions(context, (ImageSource? source) async {
-                          if (source == ImageSource.gallery) {
-                            selectImage();
-                            //Si se selecciona la camara, abrir la camara
-                          } else if (source == ImageSource.camera) {
-                            cameraImage();
-                          } 
-                        });
-                      },
-                      //Decoración circulo de imagen
-                      child: CircleAvatar(
-                        radius: 60,
-                        child: Container(
-                          width: 130,
-                          height: 130,
-                          decoration: BoxDecoration(
-                            border: Border.all(width: 4, color: Colors.white),
-                            boxShadow: [
-                              BoxShadow(
-                                spreadRadius: 2,
-                                blurRadius: 10,
-                                color: Colors.black.withOpacity(0.1),
-                              )
-                            ],
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: NetworkImage(userImage),
+                    _img != null
+                        ? CircleAvatar(
+                            //Estilo de la imagen del usuario
+                            radius: 60,
+                            child: Container(
+                              //tamaño de la imagen
+                              width: 130,
+                              height: 130,
+                              decoration: BoxDecoration(
+                                //Decoración de la imagen
+                                border: Border.all(width: 4, color: Colors.white),
+                                boxShadow: [
+                                  BoxShadow(
+                                    //Sombreado
+                                    spreadRadius: 2,
+                                    blurRadius: 10,
+                                    color: Colors.black.withOpacity(0.1),
+                                  )
+                                ],
+                                //Imprimir la imagen por defecto
+                                shape: BoxShape.circle,
+                                image: DecorationImage(
+                                  fit: BoxFit.cover,
+                                  image: FileImage(_img!),
+                                ),
+                              ),
+                            ),
+                          )
+                        : GestureDetector(
+                            //Mostrar opciones al oprimir
+                            onTap: () {
+                              //Si selecciona galeria, obtener la imagen seleccionada
+                              DialogHelper.showOptions(context,
+                                  (ImageSource? source) async {
+                                if (source == ImageSource.gallery) {
+                                  selectImage();
+                                  //Si se selecciona la camara, abrir la camara
+                                } else if (source == ImageSource.camera) {
+                                  cameraImage();
+                                }
+                              });
+                            },
+                            //Decoración circulo de imagen
+                            child: CircleAvatar(
+                              radius: 60,
+                              child: Container(
+                                width: 130,
+                                height: 130,
+                                decoration: BoxDecoration(
+                                  border:
+                                      Border.all(width: 4, color: Colors.white),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      spreadRadius: 2,
+                                      blurRadius: 10,
+                                      color: Colors.black.withOpacity(0.1),
+                                    )
+                                  ],
+                                  shape: BoxShape.circle,
+                                  image: DecorationImage(
+                                    fit: BoxFit.cover,
+                                    image: NetworkImage(userImage),
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                    ),
                     //Lapiz que acompaña el circulo de la imagen
                     Positioned(
                       bottom: 0,
@@ -231,17 +244,15 @@ class _SocialPageState extends State<SocialPage> {
                 padding: const EdgeInsets.only(left: 15),
                 child: Align(
                   alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Datos personales',
-                    style: TextStyle(fontSize: responsive.inch * 0.015)
-                  ),
+                  child: Text('Datos personales',
+                      style: TextStyle(fontSize: responsive.inch * 0.015)),
                 ),
               ),
               //Parametros para edición
               Column(
                 children: [
                   ListTile(
-                  //Primer apartado, edicion de perfil
+                    //Primer apartado, edicion de perfil
                     title: const Text('Nombre de usuario'),
                     //Mostrar nombre actual
                     subtitle: Text(username),
@@ -249,9 +260,12 @@ class _SocialPageState extends State<SocialPage> {
                       icon: const Icon(Icons.edit),
                       //Si oprime el campo mostrar la edición del nombre
                       onPressed: () {
-                        DialogHelper.editProfile(context, 'nombre', username, (newName) {setState(() {
-                          username = newName;
-                        });});
+                        DialogHelper.editProfile(context, 'nombre', username,
+                            (newName) {
+                          setState(() {
+                            username = newName;
+                          });
+                        });
                       },
                     ),
                   ),
@@ -266,16 +280,16 @@ class _SocialPageState extends State<SocialPage> {
                     subtitle: const Text('********'),
                     trailing: IconButton(
                       icon: const Icon(Icons.edit),
-                      onPressed: () {
-                        DialogHelper.editPassword(context);
-                      },
+                      onPressed: () {},
                     ),
                   ),
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 15),
                     child: Divider(),
                   ),
-                  SizedBox(height: responsive.height * 0.25,),
+                  SizedBox(
+                    height: responsive.height * 0.25,
+                  ),
                   Container(
                     //Acciones adicionales de la cuenta
                     color: Colors.green[400],
@@ -284,18 +298,21 @@ class _SocialPageState extends State<SocialPage> {
                     padding: const EdgeInsets.only(left: 15),
                     child: Align(
                       alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Control de la cuenta',
-                        style: TextStyle(fontSize: responsive.inch * 0.015)
-                      ),
+                      child: Text('Control de la cuenta',
+                          style: TextStyle(fontSize: responsive.inch * 0.015)),
                     ),
                   ),
                   ListTile(
-                    title: Text('Eliminar Cuenta', style: TextStyle(fontSize: responsive.inch * 0.02, color: Colors.red),),
-                    leading: const Icon(Icons.delete, color: Colors.red,),
-                    onTap: (){
-      
-                    },
+                    title: Text(
+                      'Eliminar Cuenta',
+                      style: TextStyle(
+                          fontSize: responsive.inch * 0.02, color: Colors.red),
+                    ),
+                    leading: const Icon(
+                      Icons.delete,
+                      color: Colors.red,
+                    ),
+                    onTap: () {},
                   )
                 ],
               ),

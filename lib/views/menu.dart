@@ -59,12 +59,11 @@ class _MenuState extends State<Menu> {
   @override
   Widget build(BuildContext context) {
     Responsive responsive = Responsive.of(context);
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (bool didPop) async {
         // Navegar a la página principal
         Navigator.of(context).pushReplacementNamed('/home');
-        // Indicar que no se debe permitir que la aplicación se cierre
-        return false;
       },
       child: Scaffold(
         appBar: AppBar(
@@ -108,7 +107,7 @@ class _MenuState extends State<Menu> {
                       );
                     },
                     child: CircleAvatar(
-                      radius: responsive.inch * 0.06,
+                      radius: responsive.inch * 0.075,
                       backgroundImage: NetworkImage(userImage),
                     ),
                   ),

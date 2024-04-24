@@ -57,12 +57,11 @@ class FavoritesPageState extends State<FavoritesPage> {
   @override
   Widget build(BuildContext context) {
     Responsive responsive = Responsive.of(context);
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (bool didPop) async {
         // Navegar a la página principal
         Navigator.of(context).pushReplacementNamed('/menu');
-        // Indicar que no se debe permitir que la aplicación se cierre
-        return false;
       },
       child: Scaffold(
         appBar: AppBar(

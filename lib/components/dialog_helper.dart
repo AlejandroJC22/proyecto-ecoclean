@@ -292,9 +292,10 @@ class DialogHelper {
                           User? user = FirebaseAuth.instance.currentUser;
                           if (user != null) {
                             //Conexión con el almacenamiento de firebase
-                            final FirebaseStorage _storage = FirebaseStorage.instance;
+                            final FirebaseStorage storage = FirebaseStorage.instance;
                             // Eliminar datos de FirebaseStorage
-                            await _storage.ref().child('profileImages').child(user.uid).delete();
+                            var userID = user.uid;
+                            await storage.ref().child('profileImages').child(userID).delete();
 
                             final CollectionReference pruebaCollection = FirebaseFirestore.instance.collection('users');
                             await pruebaCollection.doc(user.uid).update({
