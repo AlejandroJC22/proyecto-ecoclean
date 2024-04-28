@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecocleanproyect/components/responsive.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 
 // Clase principal que representa la pantalla principal de la aplicación.
@@ -169,6 +170,10 @@ class _PrincipalPageState extends State<PrincipalPage> {
                   margin: const EdgeInsets.symmetric(horizontal: 15),
                   width: double.infinity,
                   height: 300,
+                  child: Image.asset(
+                    'lib/images/map.jpg',
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
               // Espaciado adicional
@@ -280,7 +285,7 @@ class _PrincipalPageState extends State<PrincipalPage> {
   // Método para construir tarjetas deslizables con imágenes y enlaces a empresas prestadoras de servicio.
   Widget buildCards(String imagePath, String url) {
     // Crear instancia de Uri a partir de la cadena de URL proporcionada.
-
+    final uri = Uri.parse(url);
     // Retornar un contenedor con la tarjeta deslizable.
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10),
@@ -299,7 +304,11 @@ class _PrincipalPageState extends State<PrincipalPage> {
                   // Configurar acción al hacer clic en la imagen.
                   onTap: () async {
                     // Verificar si se puede lanzar la URL y abrir el enlace.
-                    
+                    if (!await launchUrl(uri)){
+                      launchUrl(uri);
+                    }else{
+                      return;
+                    }
                   },
                   child: Image.asset(
                     imagePath,

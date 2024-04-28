@@ -163,6 +163,7 @@ class _LoginPageState extends State<RegisterPage> {
                       background: Colors.white70, 
                       child: Image.asset(
                         'lib/images/google.png',
+                        color: Colors.red,
                         width: responsive.inch * 0.03,
                       ),),
 
