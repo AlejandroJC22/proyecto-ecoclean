@@ -272,7 +272,7 @@ class DialogHelper {
                 onSelect(ImageSource.camera); // Usar la cámara
               },
               leading: const Icon(Icons.camera_alt),
-              title: const Text('Cámara'),
+              title: const Text('Cámara'),      
             ),
             
             ListTile(
@@ -302,9 +302,25 @@ class DialogHelper {
                               'imagenURL': 'https://static.vecteezy.com/system/resources/previews/008/442/086/non_2x/illustration-of-human-icon-user-symbol-icon-modern-design-on-blank-background-free-vector.jpg',
                             });
                             Navigator.of(context).pushNamed('/account');
+                            // Mostrar Snackbar si la actualización fue exitosa
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Datos actualizados correctamente'),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
+                          }else{
+                            // Mostrar Snackbar si la actualización fue exitosa
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('No se pudo completar la acción'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
                           }
                         }, 
-                        child: const Text('Aceptar', style: TextStyle(color: Colors.red),)
+                        child: const Text('Aceptar', style: TextStyle(color: Colors.red),),
+                        
                       ),
                     ],
                   );
@@ -317,6 +333,13 @@ class DialogHelper {
             ListTile(
               onTap: () {
                 Navigator.of(context).pop(); // Cancelar
+                // Mostrar Snackbar si la actualización fue exitosa
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('No se pudo realizar la acción'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
               },
               leading: const Icon(Icons.cancel, color: Colors.red),
               title: const Text('Cancelar'),

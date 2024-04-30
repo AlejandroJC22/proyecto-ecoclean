@@ -5,7 +5,6 @@ import 'package:ecocleanproyect/components/dialog_helper.dart';
 import 'package:ecocleanproyect/components/responsive.dart';
 import 'package:ecocleanproyect/controller/add_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 
@@ -256,12 +255,26 @@ class _SocialPageState extends State<SocialPage> {
                     title: const Text('Nombre de usuario'),
                     //Mostrar nombre actual
                     subtitle: Text(username),
+                    onTap: (){
+                      DialogHelper.editProfile(
+                        context, 
+                        'nombre', 
+                        username,
+                        (newName) {
+                          setState(() {
+                            username = newName;
+                          });
+                        });
+                    },
                     trailing: IconButton(
                       icon: const Icon(Icons.edit),
                       //Si oprime el campo mostrar la edición del nombre
                       onPressed: () {
-                        DialogHelper.editProfile(context, 'nombre', username,
-                            (newName) {
+                        DialogHelper.editProfile(
+                          context, 
+                          'nombre', 
+                          username,
+                          (newName) {
                           setState(() {
                             username = newName;
                           });
@@ -280,8 +293,11 @@ class _SocialPageState extends State<SocialPage> {
                     subtitle: const Text('********'),
                     trailing: IconButton(
                       icon: const Icon(Icons.edit),
-                      onPressed: () {},
+                      onPressed: () {
+                        DialogHelper.editPassword(context);
+                      },
                     ),
+                    onTap: (){DialogHelper.editPassword(context);},
                   ),
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 15),
