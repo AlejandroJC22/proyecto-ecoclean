@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">EcoClean 2</string>
+    <string name="facebook_app_id">802339471481204</string>
+    <string name="fb_login_protocol_scheme">fb802339471481204</string>
+    <string name="facebook_client_token">fb561ece50e8e7d8de5de205cb02f4e7</string>
+</resources>

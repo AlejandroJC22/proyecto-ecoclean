@@ -118,7 +118,8 @@ class _ForgotPassState extends State<ForgotPass>{
                 //texto identificador
                 child: Text("Cancelar", style: TextStyle(fontSize: responsive.inch * 0.015, color: Colors.green)),
               ),
-              Center(child: Image.asset("lib/images/logo.png", width: 32, height: 32)),
+              SizedBox(width: responsive.inch*0.145,),
+              Image.asset("lib/images/logo.png", width: 32, height: 32),
             ],
           ),
         ),

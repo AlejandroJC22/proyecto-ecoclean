@@ -57,130 +57,137 @@ class FavoritesPageState extends State<FavoritesPage> {
   @override
   Widget build(BuildContext context) {
     Responsive responsive = Responsive.of(context);
-    return Scaffold(
-      appBar: AppBar(
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 10,),
-          child: GestureDetector(
-          onTap: (){
-            Navigator.of(context).pushNamed('/menu');
-          },
-          child: const Icon(Icons.arrow_back_ios, color: Colors.green),
-          ),
-        ),
-        centerTitle: true,
-        title: Text('Rutas favoritas', style: TextStyle(fontSize: responsive.inch * 0.028, color: Colors.green),),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 15), 
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (bool didPop) async {
+        // Navegar a la página principal
+        Navigator.of(context).pushReplacementNamed('/menu');
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: Padding(
+            padding: const EdgeInsets.only(left: 10,),
             child: GestureDetector(
-              onTap: () {
-              Navigator.of(context).pushNamed('/home');
+            onTap: (){
+              Navigator.of(context).pushNamed('/menu');
             },
-            child: Icon(Icons.home, size: responsive.inch * 0.035, color: Colors.green),
+            child: const Icon(Icons.arrow_back_ios, color: Colors.green),
             ),
-          )
-        ],
-      ),
-      body:  SingleChildScrollView(
-        child: Column(
-          children: [
-            const SizedBox(height: 20,),
-            ListTile(
-              title: Text(
-                'Tu ubicación actual', 
-                style: TextStyle(fontSize: responsive.inch * 0.018),
-              ),
-              leading: const Icon(Icons.add_location_alt, color: Colors.green,),
-              onTap: (){},
-            ),
-            ListTile(
-              title: Text(
-                'Ver en el mapa', 
-                style: TextStyle(fontSize: responsive.inch * 0.018),
-              ),
-              leading: const Icon(Icons.map, color: Colors.green,),
-              onTap: (){},
-            ),
-            const SizedBox(height: 10,),
-            Container(
-              //Acciones adicionales de la cuenta
-              color: Colors.green[400],
-              width: double.infinity,
-              height: 25,
-              padding: const EdgeInsets.only(left: 15),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Ver rutas favoritas',
-                  style: TextStyle(fontSize: responsive.inch * 0.015)
-                ),
-              ),
-            ),
-            ListTile(
-              title: Text('Casa', style: TextStyle(fontWeight: FontWeight.bold, fontSize: responsive.inch * 0.018)),
-              subtitle: Text('Pulsa para ver', style: TextStyle(color: Colors.grey, fontSize: responsive.inch * 0.013)),
-              onTap: (){},
-              trailing: GestureDetector(
+          ),
+          centerTitle: true,
+          title: Text('Rutas favoritas', style: TextStyle(fontSize: responsive.inch * 0.028, color: Colors.green),),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 15), 
+              child: GestureDetector(
                 onTap: () {
-                  DialogHelper.editProfile(
-                    context,
-                    'Casa',
-                    home,
-                    (newHome) {
-                      setState(() {
-                        home = newHome;
-                      });
-                    },
-                  );
-                },
-                child: const Icon(Icons.edit, color: Colors.grey),
-              ),
-            ),
-            ListTile(
-              title: Text('Trabajo', style: TextStyle(fontWeight: FontWeight.bold, fontSize: responsive.inch * 0.018)),
-              subtitle: Text('Pulsa para ver', style: TextStyle(color: Colors.grey, fontSize: responsive.inch * 0.013)),
-              onTap: (){},
-              trailing: GestureDetector(
-                onTap: () {
-                  DialogHelper.editProfile(
-                    context,
-                    'Trabajo',
-                    work,
-                    (newWork) {
-                      setState(() {
-                        work = newWork;
-                      });
-                    },
-                  );
-                },
-                child: const Icon(Icons.edit, color: Colors.grey),
-              ),
-            ),
-            SizedBox(height: responsive.height * 0.3,),
-            Container(
-              //Acciones adicionales de la cuenta
-              color: Colors.green[400],
-              width: double.infinity,
-              height: 25,
-              padding: const EdgeInsets.only(left: 15),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Configuración adicional',
-                  style: TextStyle(fontSize: responsive.inch * 0.015)
-                ),
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.delete, color: Colors.red),
-              title: Text('Eliminar ruta', style: TextStyle(fontSize: responsive.inch * 0.018, color: Colors.red)),
-              subtitle: Text('Pulsa para seleccionar ruta a eliminar', style: TextStyle(color: Colors.grey, fontSize: responsive.inch * 0.013)),
-              onTap: (){
-                DialogHelper.deleteRoute(context, () => null);
+                Navigator.of(context).pushNamed('/home');
               },
-            ),
+              child: Icon(Icons.home, size: responsive.inch * 0.035, color: Colors.green),
+              ),
+            )
           ],
+        ),
+        body:  SingleChildScrollView(
+          child: Column(
+            children: [
+              const SizedBox(height: 20,),
+              ListTile(
+                title: Text(
+                  'Tu ubicación actual', 
+                  style: TextStyle(fontSize: responsive.inch * 0.018),
+                ),
+                leading: const Icon(Icons.add_location_alt, color: Colors.green,),
+                onTap: (){},
+              ),
+              ListTile(
+                title: Text(
+                  'Ver en el mapa', 
+                  style: TextStyle(fontSize: responsive.inch * 0.018),
+                ),
+                leading: const Icon(Icons.map, color: Colors.green,),
+                onTap: (){},
+              ),
+              const SizedBox(height: 10,),
+              Container(
+                //Acciones adicionales de la cuenta
+                color: Colors.green[400],
+                width: double.infinity,
+                height: 25,
+                padding: const EdgeInsets.only(left: 15),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Ver rutas favoritas',
+                    style: TextStyle(fontSize: responsive.inch * 0.015)
+                  ),
+                ),
+              ),
+              ListTile(
+                title: Text('Casa', style: TextStyle(fontSize: responsive.inch * 0.018)),
+                subtitle: Text('Pulsa para ver', style: TextStyle(color: Colors.grey, fontSize: responsive.inch * 0.013)),
+                onTap: (){},
+                trailing: GestureDetector(
+                  onTap: () {
+                    DialogHelper.editProfile(
+                      context,
+                      'Casa',
+                      home,
+                      (newHome) {
+                        setState(() {
+                          home = newHome;
+                        });
+                      },
+                    );
+                  },
+                  child: const Icon(Icons.edit, color: Colors.grey),
+                ),
+              ),
+              ListTile(
+                title: Text('Trabajo', style: TextStyle(fontSize: responsive.inch * 0.018)),
+                subtitle: Text('Pulsa para ver', style: TextStyle(color: Colors.grey, fontSize: responsive.inch * 0.013)),
+                onTap: (){},
+                trailing: GestureDetector(
+                  onTap: () {
+                    DialogHelper.editProfile(
+                      context,
+                      'Trabajo',
+                      work,
+                      (newWork) {
+                        setState(() {
+                          work = newWork;
+                        });
+                      },
+                    );
+                  },
+                  child: const Icon(Icons.edit, color: Colors.grey),
+                ),
+              ),
+              SizedBox(height: responsive.height * 0.3,),
+              Container(
+                //Acciones adicionales de la cuenta
+                color: Colors.green[400],
+                width: double.infinity,
+                height: 25,
+                padding: const EdgeInsets.only(left: 15),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Configuración adicional',
+                    style: TextStyle(fontSize: responsive.inch * 0.015)
+                  ),
+                ),
+              ),
+              ListTile(
+                leading: const Icon(Icons.delete, color: Colors.red),
+                title: Text('Eliminar ruta', style: TextStyle(fontSize: responsive.inch * 0.018, color: Colors.red)),
+                subtitle: Text('Pulsa para seleccionar ruta a eliminar', style: TextStyle(color: Colors.grey, fontSize: responsive.inch * 0.013)),
+                onTap: (){
+                  DialogHelper.deleteRoute(context, () => null);
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

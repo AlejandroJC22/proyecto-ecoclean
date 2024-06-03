@@ -59,122 +59,112 @@ class _MenuState extends State<Menu> {
   @override
   Widget build(BuildContext context) {
     Responsive responsive = Responsive.of(context);
-    return Scaffold(
-      appBar: AppBar(
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 10),
-          child: GestureDetector(
-          onTap: (){
-            Navigator.of(context).pushNamed('/home');
-          },
-          child: const Icon(Icons.arrow_back_ios, color: Colors.green),
-          ),
-        )
-      ),
-      body: SafeArea(
-        child: ListView(
-          children: [
-            Column(
-              children: [
-                const SizedBox(height: 20,),
-                GestureDetector(
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          backgroundColor: Colors.white,
-                          content: Image.network(
-                            userImage,
-                            fit: BoxFit.contain,
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text('Cerrar', style: TextStyle(color: Colors.green),),
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (bool didPop) async {
+        // Navegar a la página principal
+        Navigator.of(context).pushReplacementNamed('/home');
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: Padding(
+            padding: const EdgeInsets.only(left: 10),
+            child: GestureDetector(
+            onTap: (){
+              Navigator.of(context).pushNamed('/home');
+            },
+            child: const Icon(Icons.arrow_back_ios, color: Colors.green),
+            ),
+          )
+        ),
+        body: SafeArea(
+          child: ListView(
+            children: [
+              Column(
+                children: [
+                  const SizedBox(height: 10,),
+                  GestureDetector(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            backgroundColor: Colors.white,
+                            content: Image.network(
+                              userImage,
+                              fit: BoxFit.contain,
                             ),
-                          ],
-                        );
-                      },
-                    );
-                  },
-                  child: CircleAvatar(
-                    radius: 60,
-                    child: Container(
-                      width: 130,
-                      height: 130,
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            spreadRadius: 2,
-                            blurRadius: 10,
-                            color: Colors.black.withOpacity(0.1),
-                          )
-                        ],
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: NetworkImage(userImage),
-                        ),
-                      ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Cerrar', style: TextStyle(color: Colors.green),),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                    child: CircleAvatar(
+                      radius: responsive.inch * 0.075,
+                      backgroundImage: NetworkImage(userImage),
                     ),
                   ),
-                ),
-                const SizedBox(height: 10,),
-                Text(username, style: TextStyle(fontSize: responsive.inch * 0.025),),
-                Text(userEmail, style: TextStyle(fontSize: responsive.inch * 0.025)),
-              ],
-            ),
-            const SizedBox(height: 15,),
-            const Divider(),
-            
-            ListTile(
-              leading: const Icon(Icons.home, color: Colors.green),
-              title: Text('Página Inicial', style: TextStyle(fontSize: responsive.inch * 0.02)),
-              onTap: (){
-                Navigator.of(context).pushNamed('/home');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.person, color: Colors.green),
-              title: Text('Cuenta', style: TextStyle(fontSize: responsive.inch * 0.02)),
-              onTap: (){
-                Navigator.of(context).pushNamed('/account');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.favorite, color: Colors.green),
-              title: Text('Ubicaciones Favoritas', style: TextStyle(fontSize: responsive.inch * 0.02)),
-              onTap: (){
-                Navigator.of(context).pushNamed('/favorites');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings, color: Colors.green),
-              title: Text('Configuración', style: TextStyle(fontSize: responsive.inch * 0.02)),
-              onTap: (){
-                Navigator.of(context).pushNamed('/settings');
-              },
-            ),
-            SizedBox(height: responsive.height * 0.15,),
-            ListTile(
-              leading: const Icon(Icons.star, color: Colors.green),
-              title: Text('Valoranos', style: TextStyle(fontSize: responsive.inch * 0.02)),
-              onTap: (){
-                
-              },
-            ),
-            ListTile(
-              title: Text('Cerrar sesión', style: TextStyle(color: Colors.red, fontSize:  responsive.inch * 0.02)),
-              leading: const Icon(Icons.logout, color: Colors.red),
-              onTap: () async {
-                await FirebaseAuth.instance.signOut();
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginPage()));
-              },
-            ),
-          ],
+                  const SizedBox(height: 10,),
+                  Text(username, style: TextStyle(fontSize: responsive.inch * 0.025),),
+                  Text(userEmail, style: TextStyle(fontSize: responsive.inch * 0.025)),
+                ],
+              ),
+              const SizedBox(height: 15,),
+              const Divider(),
+              
+              ListTile(
+                leading: const Icon(Icons.home, color: Colors.green),
+                title: Text('Página Inicial', style: TextStyle(fontSize: responsive.inch * 0.02)),
+                onTap: (){
+                  Navigator.of(context).pushNamed('/home');
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.person, color: Colors.green),
+                title: Text('Cuenta', style: TextStyle(fontSize: responsive.inch * 0.02)),
+                onTap: (){
+                  Navigator.of(context).pushNamed('/account');
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.favorite, color: Colors.green),
+                title: Text('Ubicaciones Favoritas', style: TextStyle(fontSize: responsive.inch * 0.02)),
+                onTap: (){
+                  Navigator.of(context).pushNamed('/favorites');
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.settings, color: Colors.green),
+                title: Text('Configuración', style: TextStyle(fontSize: responsive.inch * 0.02)),
+                onTap: (){
+                  Navigator.of(context).pushNamed('/settings');
+                },
+              ),
+              SizedBox(height: responsive.height * 0.15,),
+              ListTile(
+                leading: const Icon(Icons.star, color: Colors.green),
+                title: Text('Valoranos', style: TextStyle(fontSize: responsive.inch * 0.02)),
+                onTap: (){
+                  
+                },
+              ),
+              ListTile(
+                title: Text('Cerrar sesión', style: TextStyle(color: Colors.red, fontSize:  responsive.inch * 0.02)),
+                leading: const Icon(Icons.logout, color: Colors.red),
+                onTap: () async {
+                  await FirebaseAuth.instance.signOut();
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginPage()));
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
