@@ -3,6 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecocleanproyect/components/responsive.dart';
 import 'package:ecocleanproyect/components/text_field.dart';
+import 'package:ecocleanproyect/controller/add_image.dart';
 import 'package:ecocleanproyect/views/forgot_password_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -349,6 +350,40 @@ class DialogHelper {
       },
     );
   }
+
+  static void deleteAccount(BuildContext context, String id) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Confirmación"),
+          content: const Text("¿Estás seguro de que quieres eliminar todos los datos?\n Esta acción es irreversible"),
+          actions: [
+            TextButton(
+              child: const Text("Cancelar", style: TextStyle(color: Colors.green)),
+              onPressed: () {
+                Navigator.of(context).pop(); // Cerrar el cuadro de diálogo
+              },
+            ),
+            TextButton(
+              child: const Text("Aceptar", style: TextStyle(color: Colors.red),),
+              onPressed: () async {
+                // Crear una instancia de StoreData
+                StoreData storeData = StoreData();
+
+                // Llamar al método deleteData en la instancia creada
+                await storeData.deleteData(id);
+                Navigator.of(context).pop(); // Cerrar el cuadro de diálogo
+                // Puedes redirigir a la pantalla de inicio de sesión después de eliminar los datos
+                Navigator.of(context).pushNamed('/login');
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   static void deleteRoute(BuildContext context, Function() onSelect){
     Responsive responsive = Responsive.of(context);
     showDialog(

@@ -59,16 +59,28 @@ class StoreData {
 
       // Verificar si el usuario actual es nulo (no debería serlo si ha iniciado sesión)
       if (user != null) {
+
         // Eliminar datos de FirebaseAuth (cerrar sesión y eliminar la cuenta permanentemente)
         await user.delete();
+
+        // Eliminar datos de FirebaseFirestore
+        await _firestore.collection('users').doc(userId).delete();
+
+        //Obtener la referencia a la carpeta de imagenes
+        Reference storageRef = _storage.ref().child('profileImages').child(userId);
+
+        //Listar los archivos en el directorio
+        ListResult result = await storageRef.listAll();
+
+        //Si hay archivos, eliminarlos
+        if (result.items.isNotEmpty){
+          for (Reference fileRef in result.items) {
+            await fileRef.delete();
+          }
+        }else{
+          return;
+        }
       }
-
-      // Eliminar datos de FirebaseFirestore
-      await _firestore.collection('users').doc(userId).delete();
-
-      // Eliminar datos de FirebaseStorage
-      await _storage.ref().child('profileImages').child(userId).delete();
-
       // Mostrar un mensaje de éxito o realizar otras acciones después de eliminar los datos
       print("Datos eliminados con éxito.");
     } catch (error) {

@@ -328,7 +328,9 @@ class _SocialPageState extends State<SocialPage> {
                       Icons.delete,
                       color: Colors.red,
                     ),
-                    onTap: () {},
+                    onTap: () {
+                      DialogHelper.deleteAccount(context, id);
+                    },
                   )
                 ],
               ),
