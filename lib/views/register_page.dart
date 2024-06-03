@@ -1,8 +1,8 @@
 import 'package:ecocleanproyect/components/responsive.dart';
 import 'package:ecocleanproyect/controller/register_data.dart';
+import 'package:ecocleanproyect/controller/social_sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:ecocleanproyect/components/buttons.dart';
-import 'package:ecocleanproyect/components/icons.dart';
 import 'package:ecocleanproyect/components/text_field.dart';
 
 class RegisterPage extends StatefulWidget{
@@ -18,6 +18,7 @@ class _LoginPageState extends State<RegisterPage> {
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmpasswordController = TextEditingController();
   bool _obscureText = true;
+  final _auth = FirebaseAuthService();
 
 
   @override
@@ -149,35 +150,34 @@ class _LoginPageState extends State<RegisterPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    IconsRow(
-                      background: const Color.fromARGB(255, 66, 103, 178), 
+                    FloatingActionButton(
+                      onPressed: () async {
+                        //Validar los datos de inicio con Facebook
+                        await _auth.signInWithFacebook();
+                      },
+                      backgroundColor: const Color.fromARGB(255, 66, 103, 178),
                       child: Image.asset(
                         'lib/images/facebook.png',
                         color: Colors.white,
-                        width: responsive.inch * 0.03,
-                      ),),
-
+                        width: responsive.inch * 0.04,
+                      ),
+                    ),
                     const SizedBox(width: 12,),
-
-                    IconsRow(
-                      background: Colors.white70, 
+                    FloatingActionButton(
+                      onPressed: () async {
+                        final credential = await _auth.signInWithGoogle(context);
+                        if (credential != null) {
+                          // Redirigir a la pantalla principal si el inicio de sesión fue exitoso
+                          // ignore: use_build_context_synchronously
+                          Navigator.pushReplacementNamed(context, '/home');
+                        }
+                      },
+                      backgroundColor: Colors.white,
                       child: Image.asset(
                         'lib/images/google.png',
-                        width: responsive.inch * 0.03,
-                      ),),
-
-                    const SizedBox(width: 12,),
-
-                    IconsRow(
-                      background: Colors.black, 
-                      child: Image.asset(
-                        'lib/images/twitter.png',
-                        color: Colors.white,
-                        width: responsive.inch * 0.03,
-                      ),),
-
-                    const SizedBox(height: 20,),
-
+                        width: responsive.inch * 0.04,
+                      ),
+                    ),
                   ],
                 )
 

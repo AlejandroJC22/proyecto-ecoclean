@@ -2,8 +2,11 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecocleanproyect/components/responsive.dart';
+import 'package:ecocleanproyect/components/text_field.dart';
+import 'package:ecocleanproyect/controller/add_image.dart';
 import 'package:ecocleanproyect/views/forgot_password_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -108,6 +111,7 @@ class DialogHelper {
     TextEditingController currentPasswordController = TextEditingController();
     TextEditingController newPasswordController = TextEditingController();
     TextEditingController confirmPasswordController = TextEditingController();
+    bool obscureText = true;
 
     showDialog(
       context: context,
@@ -118,6 +122,38 @@ class DialogHelper {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                TextFieldContainer(
+                  child: TextField(
+                  obscureText: obscureText,
+                  controller: currentPasswordController,
+                  decoration: InputDecoration(
+                    hintText: 'Contraseña antigua',
+                    icon: Icon(Icons.lock, color:Colors.green[100]),
+                    border: InputBorder.none
+                  ),
+                )),
+                const SizedBox(height: 3,),
+                TextFieldContainer(
+                  child: TextField(
+                  obscureText: obscureText,
+                  controller: newPasswordController,
+                  decoration: InputDecoration(
+                    hintText: 'Contraseña nueva',
+                    icon: Icon(Icons.lock, color:Colors.green[100]),
+                    border: InputBorder.none
+                  ),
+                )),
+                const SizedBox(height: 3,),
+                TextFieldContainer(
+                  child: TextField(
+                  obscureText: obscureText,
+                  controller: confirmPasswordController,
+                  decoration: InputDecoration(
+                    hintText: 'Confirmar contraseña',
+                    icon: Icon(Icons.lock, color:Colors.green[100]),
+                    border: InputBorder.none
+                  ),
+                )),
                 TextButton(
                   onPressed: () {
                     Navigator.push(
@@ -127,7 +163,7 @@ class DialogHelper {
                       )
                     );
                   },
-                  child: Text('Olvidé mi contraseña', style: TextStyle(fontSize: responsive.inch * 0.015, color: Colors.grey.shade200)),
+                  child: Text('Olvidé mi contraseña', style: TextStyle(fontSize: responsive.inch * 0.015, color: Colors.grey)),
                 ),
               ],
             ),
@@ -237,12 +273,74 @@ class DialogHelper {
                 onSelect(ImageSource.camera); // Usar la cámara
               },
               leading: const Icon(Icons.camera_alt),
-              title: const Text('Cámara'),
+              title: const Text('Cámara'),      
+            ),
+            
+            ListTile(
+              onTap: (){
+                showDialog(context: context, builder: (context){
+                  return AlertDialog(
+                    title: const Text('¿Está seguro que desea eliminar la imagen?'),
+                    actions: [
+                      TextButton(
+                        onPressed: (){
+                          Navigator.pop(context);
+                        }, 
+                        child: const Text('Cancelar', style: TextStyle(color: Colors.green),)
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          User? user = FirebaseAuth.instance.currentUser;
+                          if (user != null) {
+                            //Conexión con el almacenamiento de firebase
+                            final FirebaseStorage storage = FirebaseStorage.instance;
+                            // Eliminar datos de FirebaseStorage
+                            var userID = user.uid;
+                            await storage.ref().child('profileImages').child(userID).delete();
+
+                            final CollectionReference pruebaCollection = FirebaseFirestore.instance.collection('users');
+                            await pruebaCollection.doc(user.uid).update({
+                              'imagenURL': 'https://static.vecteezy.com/system/resources/previews/008/442/086/non_2x/illustration-of-human-icon-user-symbol-icon-modern-design-on-blank-background-free-vector.jpg',
+                            });
+                            Navigator.of(context).pushNamed('/account');
+                            // Mostrar Snackbar si la actualización fue exitosa
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Datos actualizados correctamente'),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
+                          }else{
+                            // Mostrar Snackbar si la actualización fue exitosa
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('No se pudo completar la acción'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        }, 
+                        child: const Text('Aceptar', style: TextStyle(color: Colors.red),),
+                        
+                      ),
+                    ],
+                  );
+                });
+              },
+              leading: const Icon(Icons.delete, color: Colors.red,),
+              title: const Text('Eliminar imagen', style: TextStyle(color: Colors.red),),
             ),
 
             ListTile(
               onTap: () {
                 Navigator.of(context).pop(); // Cancelar
+                // Mostrar Snackbar si la actualización fue exitosa
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('No se pudo realizar la acción'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
               },
               leading: const Icon(Icons.cancel, color: Colors.red),
               title: const Text('Cancelar'),
@@ -252,6 +350,40 @@ class DialogHelper {
       },
     );
   }
+
+  static void deleteAccount(BuildContext context, String id) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Confirmación"),
+          content: const Text("¿Estás seguro de que quieres eliminar todos los datos?\n Esta acción es irreversible"),
+          actions: [
+            TextButton(
+              child: const Text("Cancelar", style: TextStyle(color: Colors.green)),
+              onPressed: () {
+                Navigator.of(context).pop(); // Cerrar el cuadro de diálogo
+              },
+            ),
+            TextButton(
+              child: const Text("Aceptar", style: TextStyle(color: Colors.red),),
+              onPressed: () async {
+                // Crear una instancia de StoreData
+                StoreData storeData = StoreData();
+
+                // Llamar al método deleteData en la instancia creada
+                await storeData.deleteData(id);
+                Navigator.of(context).pop(); // Cerrar el cuadro de diálogo
+                // Puedes redirigir a la pantalla de inicio de sesión después de eliminar los datos
+                Navigator.of(context).pushNamed('/login');
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   static void deleteRoute(BuildContext context, Function() onSelect){
     Responsive responsive = Responsive.of(context);
     showDialog(
@@ -290,6 +422,7 @@ class DialogHelper {
       },
     );
   }
+  
 }
 
 
